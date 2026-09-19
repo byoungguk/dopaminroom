@@ -1,0 +1,46 @@
+---
+import { SITE_TITLE, NAV_LINKS } from '../consts';
+import { withBase } from '../url';
+
+const current = Astro.url.pathname.replace(/\/$/, '');
+const isActive = (href: string) => {
+  const target = withBase(href).replace(/\/$/, '');
+  return href === '/' ? current === target : current.startsWith(target);
+};
+---
+
+<header>
+  <div class="container inner">
+    <a class="logo" href={withBase("/")}>{SITE_TITLE}</a>
+    <nav>
+      {NAV_LINKS.map((link) => (
+        <a href={withBase(link.href)} class:list={{ active: isActive(link.href) }}>{link.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--text);
+  }
+  nav { display: flex; gap: 18px; }
+  nav a { color: var(--muted); font-size: 0.95rem; }
+  nav a.active, nav a:hover { color: var(--text); text-decoration: none; }
+</style>

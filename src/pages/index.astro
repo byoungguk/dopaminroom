@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getPublishedPosts } from '../posts';
+import { withBase } from '../url';
+
+const recent = (await getPublishedPosts()).slice(0, 5);
+---
+
+<BaseLayout>
+  <section class="hero">
+    <h1>{SITE_TITLE}</h1>
+    <p class="muted">{SITE_DESCRIPTION}</p>
+  </section>
+
+  <section>
+    <h2 class="section-title">최근 글</h2>
+    {recent.length === 0 && <p class="muted">아직 글이 없습니다.</p>}
+    {recent.map((post) => (
+      <PostCard
+        href={withBase(`/blog/${post.id}/`)}
+        title={post.data.title}
+        description={post.data.description}
+        pubDate={post.data.pubDate}
+      />
+    ))}
+    <p><a href={withBase("/blog/")}>전체 글 보기 →</a></p>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero { padding: 40px 0 32px; }
+  .hero h1 { margin: 0 0 8px; font-size: 2.4rem; }
+  .hero p { margin: 0; font-size: 1.05rem; }
+  .section-title {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+</style>

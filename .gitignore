@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+.DS_Store
+
+# 고객 계정정보 포함 — 공개 저장소에 올리지 않음
+PROJECT.md

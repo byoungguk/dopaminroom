@@ -1,0 +1,33 @@
+---
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+}
+
+const { href, title, description, pubDate } = Astro.props;
+---
+
+<article>
+  <a href={href}>
+    <h2>{title}</h2>
+    <p>{description}</p>
+    <FormattedDate date={pubDate} />
+  </a>
+</article>
+
+<style>
+  article { border-bottom: 1px solid var(--border); }
+  a {
+    display: block;
+    padding: 24px 0;
+    color: inherit;
+  }
+  a:hover { text-decoration: none; }
+  a:hover h2 { color: var(--accent); }
+  h2 { margin: 0 0 6px; font-size: 1.3rem; transition: color 0.15s; }
+  p { margin: 0 0 8px; color: var(--muted); }
+</style>

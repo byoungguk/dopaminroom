@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPublishedPosts } from '../../posts';
+import { withBase } from '../../url';
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title="블로그" description="도파민룸의 모든 글">
+  <h1>블로그</h1>
+  <p class="muted">총 {posts.length}개의 글</p>
+  {posts.map((post) => (
+    <PostCard
+      href={withBase(`/blog/${post.id}/`)}
+      title={post.data.title}
+      description={post.data.description}
+      pubDate={post.data.pubDate}
+    />
+  ))}
+</BaseLayout>

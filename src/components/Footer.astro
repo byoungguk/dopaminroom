@@ -1,0 +1,18 @@
+---
+import { SITE_TITLE } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="container">
+    <p class="muted">© {year} {SITE_TITLE}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+  }
+  p { margin: 0; }
+</style>
