@@ -1,0 +1,22 @@
+---
+import { STRENGTHS } from '../venue';
+---
+
+<div class="grid">
+  {STRENGTHS.map((item) => (
+    <div class="card">
+      <p class="title">{item.title}</p>
+      <p class="desc">{item.desc}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .title { margin: 0 0 6px; font-weight: 700; color: var(--accent); }
+  .desc { margin: 0; color: var(--muted); font-size: 0.92rem; }
+</style>

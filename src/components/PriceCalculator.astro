@@ -1,55 +1,104 @@
 ---
-import { CALC } from '../venue';
+import { TIERS, FEES, SIDES, VENUE } from '../venue';
+
+const config = { tiers: TIERS, fees: FEES, sides: SIDES };
+const tel = VENUE.phone.replace(/-/g, '');
 ---
 
-<div class="card calc" data-calc={JSON.stringify(CALC)}>
+<div class="card calc" data-config={JSON.stringify(config)}>
   <div class="fields">
     <label>
       인원
-      <input type="number" id="calc-people" value="2" min="1" max="30" />
+      <select id="calc-people">
+        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+          <option value={n} selected={n === 2}>{n}명</option>
+        ))}
+      </select>
     </label>
     <label>
       이용 시간
-      <input type="number" id="calc-hours" value="2" min="1" max="12" />
+      <select id="calc-hours">
+        {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
+          <option value={n} selected={n === 2}>{n}시간</option>
+        ))}
+      </select>
     </label>
     <label>
-      주대 (병)
-      <input type="number" id="calc-bottles" value="1" min="0" max="30" />
+      주대 등급
+      <select id="calc-tier">
+        {TIERS.map((tier) => <option value={tier.id}>{tier.name}</option>)}
+      </select>
+    </label>
+    <label>
+      안주
+      <select id="calc-side">
+        {SIDES.map((side) => <option value={side.id}>{side.name}</option>)}
+      </select>
     </label>
   </div>
+
   <div class="result">
-    <span>예상 금액</span>
-    <strong id="calc-total">-</strong>
+    <div>
+      <span>예상 금액</span>
+      <strong id="calc-total">문의</strong>
+    </div>
+    <p class="breakdown muted" id="calc-breakdown"></p>
   </div>
-  <p class="muted">단가 미입력 시 계산되지 않습니다. 실제 금액은 예약 시 안내드립니다.</p>
+
+  <div class="cta">
+    <a class="btn" href={`tel:${tel}`}>전화로 확인</a>
+    <a class="btn ghost" href={VENUE.kakao} target="_blank" rel="noopener">카톡 문의</a>
+  </div>
 </div>
 
 <script>
   const root = document.querySelector<HTMLElement>('.calc');
   if (root) {
-    const rates = JSON.parse(root.dataset.calc ?? '{}');
-    const el = (id: string) => document.getElementById(id) as HTMLInputElement | null;
+    const { tiers, fees, sides } = JSON.parse(root.dataset.config ?? '{}');
+    const pick = (id: string) => document.getElementById(id) as HTMLSelectElement | null;
     const total = document.getElementById('calc-total');
-    const num = (input: HTMLInputElement | null) => Math.max(0, Number(input?.value) || 0);
+    const breakdown = document.getElementById('calc-breakdown');
+    const won = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
 
     const update = () => {
-      if (!total) return;
-      const hasRates = rates.tcPerHour > 0 || rates.bottlePrice > 0 || rates.roomFee > 0;
-      if (!hasRates) {
+      if (!total || !breakdown) return;
+      const people = Number(pick('calc-people')?.value) || 0;
+      const hours = Number(pick('calc-hours')?.value) || 0;
+      const tier = tiers.find((t: any) => t.id === pick('calc-tier')?.value);
+      const side = sides.find((s: any) => s.id === pick('calc-side')?.value);
+
+      const tc = people * hours * (fees.tcPerHour || 0);
+      const bottle = tier?.price || 0;
+      const sideFee = side?.price || 0;
+      const rt = fees.rt || 0;
+      const subtotal = tc + bottle + sideFee + rt;
+
+      // 단가가 아직 입력되지 않았으면 계산하지 않는다
+      if (subtotal <= 0) {
         total.textContent = '문의';
+        breakdown.textContent = '가격이 확정되면 예상 금액이 표시됩니다.';
         return;
       }
-      const subtotal =
-        num(el('calc-people')) * num(el('calc-hours')) * rates.tcPerHour +
-        num(el('calc-bottles')) * rates.bottlePrice +
-        rates.roomFee;
-      const withService = subtotal * (1 + (rates.serviceRate ?? 0));
-      const final = Math.round(withService * (1 + (rates.vatRate ?? 0)));
-      total.textContent = `${final.toLocaleString('ko-KR')}원`;
+
+      const service = subtotal * (fees.serviceRate || 0);
+      const beforeVat = subtotal + service;
+      const vat = fees.vatIncluded ? 0 : beforeVat * (fees.vatRate || 0);
+
+      total.textContent = won(beforeVat + vat);
+      breakdown.textContent = [
+        `주대 ${won(bottle)}`,
+        `TC ${won(tc)}`,
+        rt > 0 ? `RT ${won(rt)}` : '',
+        sideFee > 0 ? `안주 ${won(sideFee)}` : '',
+        service > 0 ? `봉사료 ${won(service)}` : '',
+        vat > 0 ? `부가세 ${won(vat)}` : '',
+      ]
+        .filter(Boolean)
+        .join(' · ');
     };
 
-    ['calc-people', 'calc-hours', 'calc-bottles'].forEach((id) =>
-      el(id)?.addEventListener('input', update)
+    ['calc-people', 'calc-hours', 'calc-tier', 'calc-side'].forEach((id) =>
+      pick(id)?.addEventListener('change', update)
     );
     update();
   }
@@ -58,11 +107,11 @@ import { CALC } from '../venue';
 <style>
   .fields {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
   }
   label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
-  input {
+  select {
     background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -71,16 +120,16 @@ import { CALC } from '../venue';
     font-size: 1rem;
     font-family: inherit;
   }
-  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   .result {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
     margin-top: 18px;
     padding-top: 16px;
     border-top: 1px solid var(--border);
   }
+  .result > div { display: flex; align-items: baseline; justify-content: space-between; }
   .result span { color: var(--muted); font-size: 0.9rem; }
-  .result strong { font-size: 1.5rem; color: var(--accent); }
-  .calc p { margin: 10px 0 0; font-size: 0.8rem; }
+  .result strong { font-size: 1.6rem; color: var(--accent); }
+  .breakdown { margin: 8px 0 0; font-size: 0.82rem; }
+  .cta { display: flex; gap: 8px; margin-top: 16px; }
+  .cta .btn { flex: 1; padding: 11px 14px; font-size: 0.95rem; }
 </style>

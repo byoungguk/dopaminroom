@@ -1,9 +1,18 @@
 ---
 import { VENUE } from '../venue';
+
+const rows = [
+  { label: '영업시간', value: `${VENUE.hours} · ${VENUE.hoursNote}` },
+  { label: '규모', value: VENUE.scale },
+  { label: '상시 인원', value: VENUE.staffCount },
+  { label: '연령대', value: VENUE.staffAge },
+  { label: '위치', value: VENUE.access[0] },
+  { label: '이용 안내', value: '만 19세 이상 성인 전용' },
+];
 ---
 
 <div class="grid">
-  {VENUE.info.map((row) => (
+  {rows.map((row) => (
     <div class="card">
       <p class="label">{row.label}</p>
       <p class="value">{row.value}</p>
@@ -14,7 +23,7 @@ import { VENUE } from '../venue';
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 12px;
   }
   .label { margin: 0 0 4px; color: var(--muted); font-size: 0.85rem; }

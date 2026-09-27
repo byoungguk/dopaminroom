@@ -1,24 +1,55 @@
 ---
-import { VENUE } from '../venue';
+import { TIERS, FEES, SIDES, PRICE_NOTE } from '../venue';
 
-const format = (n: number) => (n > 0 ? `${n.toLocaleString('ko-KR')}원` : '문의');
+const won = (n: number) => (n > 0 ? `${n.toLocaleString('ko-KR')}원` : '문의');
+const sides = SIDES.filter((s) => s.id !== 'none');
 ---
 
-<table>
-  <thead>
-    <tr><th>항목</th><th class="num">금액</th></tr>
-  </thead>
-  <tbody>
-    {VENUE.prices.map((row) => (
-      <tr>
-        <td>{row.item}{row.note && <span class="muted"> · {row.note}</span>}</td>
-        <td class="num">{format(row.price)}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-<p class="muted note">{VENUE.priceNote}</p>
+<div class="tables">
+  <div class="card">
+    <h3>주대</h3>
+    <table>
+      <tbody>
+        {TIERS.map((tier) => (
+          <tr><td>{tier.name}</td><td class="num">{won(tier.price)}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>서비스 요금</h3>
+    <table>
+      <tbody>
+        <tr><td>TC <span class="muted">인원당 1시간</span></td><td class="num">{won(FEES.tcPerHour)}</td></tr>
+        <tr><td>RT <span class="muted">입장당</span></td><td class="num">{won(FEES.rt)}</td></tr>
+        <tr><td>봉사료</td><td class="num">{FEES.serviceRate > 0 ? `${FEES.serviceRate * 100}%` : '문의'}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>안주</h3>
+    <table>
+      <tbody>
+        {sides.map((side) => (
+          <tr><td>{side.name}</td><td class="num">{won(side.price)}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<p class="muted note">{PRICE_NOTE}</p>
 
 <style>
-  .note { margin: 12px 0 0; }
+  .tables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  h3 { margin: 0 0 6px; font-size: 1rem; color: var(--accent); }
+  td:first-child { border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  .note { margin: 14px 0 0; }
 </style>

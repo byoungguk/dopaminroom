@@ -1,0 +1,42 @@
+---
+import { STEPS } from '../venue';
+---
+
+<ol class="steps">
+  {STEPS.map((step, i) => (
+    <li class="card">
+      <span class="num">{i + 1}</span>
+      <div>
+        <p class="title">{step.title}</p>
+        <p class="desc">{step.desc}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  li { display: flex; gap: 12px; align-items: flex-start; }
+  .num {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: grid;
+    place-items: center;
+  }
+  .title { margin: 0 0 2px; font-weight: 700; }
+  .desc { margin: 0; color: var(--muted); font-size: 0.9rem; }
+</style>
