@@ -2,13 +2,16 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ContactBar from '../components/ContactBar.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  /** 랜딩처럼 섹션이 화면 전체 폭을 쓰는 페이지 */
+  wide?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, wide = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,9 +21,21 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <Header />
-    <main class="container">
-      <slot />
-    </main>
+    {wide ? (
+      <main>
+        <slot />
+      </main>
+    ) : (
+      <main class="container">
+        <slot />
+      </main>
+    )}
     <Footer />
+    <ContactBar />
   </body>
 </html>
+
+<style is:global>
+  main { padding-bottom: 40px; }
+  main.container { padding-top: 40px; }
+</style>

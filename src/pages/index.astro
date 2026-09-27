@@ -1,42 +1,89 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import InfoGrid from '../components/InfoGrid.astro';
+import PriceTable from '../components/PriceTable.astro';
+import PriceCalculator from '../components/PriceCalculator.astro';
+import Gallery from '../components/Gallery.astro';
 import PostCard from '../components/PostCard.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { VENUE } from '../venue';
 import { getPublishedPosts } from '../posts';
 import { withBase } from '../url';
 
-const recent = (await getPublishedPosts()).slice(0, 5);
+const recent = (await getPublishedPosts()).slice(0, 3);
+const mapUrl = `https://map.naver.com/p/search/${encodeURIComponent(VENUE.mapQuery)}`;
 ---
 
-<BaseLayout>
-  <section class="hero">
-    <h1>{SITE_TITLE}</h1>
-    <p class="muted">{SITE_DESCRIPTION}</p>
-  </section>
+<BaseLayout description={`${VENUE.category} ${VENUE.name} · ${VENUE.tagline}`} wide>
+  <Hero />
 
-  <section>
-    <h2 class="section-title">최근 글</h2>
-    {recent.length === 0 && <p class="muted">아직 글이 없습니다.</p>}
-    {recent.map((post) => (
-      <PostCard
-        href={withBase(`/blog/${post.id}/`)}
-        title={post.data.title}
-        description={post.data.description}
-        pubDate={post.data.pubDate}
-      />
-    ))}
-    <p><a href={withBase("/blog/")}>전체 글 보기 →</a></p>
-  </section>
+  <div class="container">
+    <section class="section" id="info">
+      <div class="section-head">
+        <h2>기본 정보</h2>
+        <p>{VENUE.name} 이용 안내</p>
+      </div>
+      <InfoGrid />
+    </section>
+
+    <section class="section" id="price">
+      <div class="section-head">
+        <h2>가격 안내</h2>
+        <p>예상 금액을 미리 확인해 보세요</p>
+      </div>
+      <PriceTable />
+      <div class="calc-wrap">
+        <PriceCalculator />
+      </div>
+    </section>
+
+    <section class="section" id="facility">
+      <div class="section-head">
+        <h2>시설 안내</h2>
+      </div>
+      <ul class="chips">
+        {VENUE.facilities.map((item) => <li class="tag">{item}</li>)}
+      </ul>
+      <div class="gallery-wrap">
+        <Gallery />
+      </div>
+    </section>
+
+    <section class="section" id="location">
+      <div class="section-head">
+        <h2>오시는 길</h2>
+      </div>
+      <div class="card">
+        <p class="addr">{VENUE.address}</p>
+        <p class="muted">{VENUE.addressDetail} · 영업시간 {VENUE.hours}</p>
+        <p><a href={mapUrl} target="_blank" rel="noopener">네이버 지도에서 보기 →</a></p>
+      </div>
+    </section>
+
+    {recent.length > 0 && (
+      <section class="section" id="news">
+        <div class="section-head">
+          <h2>공지 · 소식</h2>
+        </div>
+        {recent.map((post) => (
+          <PostCard
+            href={withBase(`/blog/${post.id}/`)}
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+          />
+        ))}
+        <p><a href={withBase('/blog/')}>전체 보기 →</a></p>
+      </section>
+    )}
+  </div>
 </BaseLayout>
 
 <style>
-  .hero { padding: 40px 0 32px; }
-  .hero h1 { margin: 0 0 8px; font-size: 2.4rem; }
-  .hero p { margin: 0; font-size: 1.05rem; }
-  .section-title {
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--muted);
-    font-weight: 600;
-  }
+  .calc-wrap { margin-top: 20px; }
+  .gallery-wrap { margin-top: 16px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+  .chips li { margin: 0; }
+  .addr { margin: 0 0 4px; font-weight: 600; font-size: 1.05rem; }
+  .card p:last-child { margin-bottom: 0; }
 </style>

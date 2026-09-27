@@ -1,0 +1,25 @@
+---
+// TODO: public/images/ 에 실제 사진을 넣고 아래 배열을 교체하세요.
+const photos: { src: string; alt: string }[] = [];
+---
+
+{photos.length > 0 ? (
+  <div class="grid">
+    {photos.map((photo) => <img src={photo.src} alt={photo.alt} loading="lazy" />)}
+  </div>
+) : (
+  <div class="card empty">
+    <p>사진 준비 중입니다.</p>
+    <p class="muted">고객 제공 사진을 받아 등록 예정</p>
+  </div>
+)}
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .empty { text-align: center; }
+  .empty p { margin: 0; }
+</style>

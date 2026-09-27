@@ -1,0 +1,22 @@
+---
+import { VENUE } from '../venue';
+---
+
+<div class="grid">
+  {VENUE.info.map((row) => (
+    <div class="card">
+      <p class="label">{row.label}</p>
+      <p class="value">{row.value}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .label { margin: 0 0 4px; color: var(--muted); font-size: 0.85rem; }
+  .value { margin: 0; font-weight: 600; }
+</style>

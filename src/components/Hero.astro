@@ -1,0 +1,37 @@
+---
+import { VENUE } from '../venue';
+---
+
+<section class="hero">
+  <div class="container">
+    <p class="eyebrow">{VENUE.category}</p>
+    <h1>{VENUE.name}</h1>
+    <p class="tagline">{VENUE.tagline}</p>
+    <div class="actions">
+      <a class="btn" href={`tel:${VENUE.phone.replace(/-/g, '')}`}>전화 예약</a>
+      <a class="btn ghost" href={VENUE.kakao} target="_blank" rel="noopener">카카오톡 문의</a>
+    </div>
+    <p class="notice">만 19세 이상 성인만 이용할 수 있습니다.</p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 72px 0 56px;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(217, 164, 65, 0.16), transparent 60%),
+      var(--bg);
+    text-align: center;
+  }
+  .eyebrow {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  h1 { margin: 0 0 10px; font-size: clamp(2.4rem, 9vw, 3.4rem); }
+  .tagline { margin: 0 0 26px; color: var(--muted); font-size: 1.05rem; }
+  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .notice { margin: 20px 0 0; font-size: 0.82rem; color: var(--muted); }
+</style>

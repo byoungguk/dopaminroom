@@ -7,9 +7,9 @@ import { withBase } from '../../url';
 const posts = await getPublishedPosts();
 ---
 
-<BaseLayout title="블로그" description="도파민룸의 모든 글">
-  <h1>블로그</h1>
-  <p class="muted">총 {posts.length}개의 글</p>
+<BaseLayout title="공지 · 소식" description="도파민 공지사항과 소식">
+  <h1>공지 · 소식</h1>
+  <p class="muted">총 {posts.length}개</p>
   {posts.map((post) => (
     <PostCard
       href={withBase(`/blog/${post.id}/`)}

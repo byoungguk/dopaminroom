@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { VENUE } from '../venue';
 ---
 
-<BaseLayout title="소개" description="도파민룸 소개">
-  <h1>소개</h1>
+<BaseLayout title="소개" description={`${VENUE.name} 소개`}>
+  <h1>{VENUE.name} 소개</h1>
   <div class="prose">
-    <p>도파민룸 소개 글이 들어갈 자리입니다. (내용 확정 후 교체)</p>
+    <p>{VENUE.tagline}</p>
+    <p class="muted">※ 소개 문구는 고객 확인 후 교체 예정입니다.</p>
   </div>
 </BaseLayout>

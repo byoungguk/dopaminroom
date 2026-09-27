@@ -1,0 +1,86 @@
+---
+import { CALC } from '../venue';
+---
+
+<div class="card calc" data-calc={JSON.stringify(CALC)}>
+  <div class="fields">
+    <label>
+      인원
+      <input type="number" id="calc-people" value="2" min="1" max="30" />
+    </label>
+    <label>
+      이용 시간
+      <input type="number" id="calc-hours" value="2" min="1" max="12" />
+    </label>
+    <label>
+      주대 (병)
+      <input type="number" id="calc-bottles" value="1" min="0" max="30" />
+    </label>
+  </div>
+  <div class="result">
+    <span>예상 금액</span>
+    <strong id="calc-total">-</strong>
+  </div>
+  <p class="muted">단가 미입력 시 계산되지 않습니다. 실제 금액은 예약 시 안내드립니다.</p>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.calc');
+  if (root) {
+    const rates = JSON.parse(root.dataset.calc ?? '{}');
+    const el = (id: string) => document.getElementById(id) as HTMLInputElement | null;
+    const total = document.getElementById('calc-total');
+    const num = (input: HTMLInputElement | null) => Math.max(0, Number(input?.value) || 0);
+
+    const update = () => {
+      if (!total) return;
+      const hasRates = rates.tcPerHour > 0 || rates.bottlePrice > 0 || rates.roomFee > 0;
+      if (!hasRates) {
+        total.textContent = '문의';
+        return;
+      }
+      const subtotal =
+        num(el('calc-people')) * num(el('calc-hours')) * rates.tcPerHour +
+        num(el('calc-bottles')) * rates.bottlePrice +
+        rates.roomFee;
+      const withService = subtotal * (1 + (rates.serviceRate ?? 0));
+      const final = Math.round(withService * (1 + (rates.vatRate ?? 0)));
+      total.textContent = `${final.toLocaleString('ko-KR')}원`;
+    };
+
+    ['calc-people', 'calc-hours', 'calc-bottles'].forEach((id) =>
+      el(id)?.addEventListener('input', update)
+    );
+    update();
+  }
+</script>
+
+<style>
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+  }
+  label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+  input {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 12px;
+    color: var(--text);
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .result {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .result span { color: var(--muted); font-size: 0.9rem; }
+  .result strong { font-size: 1.5rem; color: var(--accent); }
+  .calc p { margin: 10px 0 0; font-size: 0.8rem; }
+</style>
