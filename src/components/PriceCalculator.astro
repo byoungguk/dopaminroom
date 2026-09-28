@@ -1,7 +1,7 @@
 ---
-import { TIERS, FEES, SIDES, VENUE } from '../venue';
+import { TIERS, FEES, VENUE } from '../venue';
 
-const config = { tiers: TIERS, fees: FEES, sides: SIDES };
+const config = { tiers: TIERS, fees: FEES };
 const tel = VENUE.phone.replace(/-/g, '');
 ---
 
@@ -29,12 +29,6 @@ const tel = VENUE.phone.replace(/-/g, '');
         {TIERS.map((tier) => <option value={tier.id}>{tier.name}</option>)}
       </select>
     </label>
-    <label>
-      안주
-      <select id="calc-side">
-        {SIDES.map((side) => <option value={side.id}>{side.name}</option>)}
-      </select>
-    </label>
   </div>
 
   <div class="result">
@@ -58,50 +52,43 @@ const tel = VENUE.phone.replace(/-/g, '');
 <script>
   const root = document.querySelector<HTMLElement>('.calc');
   if (root) {
-    const { tiers, fees, sides } = JSON.parse(root.dataset.config ?? '{}');
+    const { tiers, fees } = JSON.parse(root.dataset.config ?? '{}');
     const pick = (id: string) => document.getElementById(id) as HTMLSelectElement | null;
-    const total = document.getElementById('calc-total');
+    const totalEl = document.getElementById('calc-total');
     const breakdown = document.getElementById('calc-breakdown');
     const won = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
 
     const update = () => {
-      if (!total || !breakdown) return;
+      if (!totalEl || !breakdown) return;
       const people = Number(pick('calc-people')?.value) || 0;
       const hours = Number(pick('calc-hours')?.value) || 0;
       const tier = tiers.find((t: any) => t.id === pick('calc-tier')?.value);
-      const side = sides.find((s: any) => s.id === pick('calc-side')?.value);
 
       const tc = people * hours * (fees.tcPerHour || 0);
       const bottle = tier?.price || 0;
-      const sideFee = side?.price || 0;
       const rt = fees.rt || 0;
-      const subtotal = tc + bottle + sideFee + rt;
+      const total = tc + bottle + rt;
 
       // 단가가 아직 입력되지 않았으면 계산하지 않는다
-      if (subtotal <= 0) {
-        total.textContent = '문의';
+      if (total <= 0) {
+        totalEl.textContent = '문의';
         breakdown.textContent = '가격이 확정되면 예상 금액이 표시됩니다.';
         return;
       }
 
-      const service = subtotal * (fees.serviceRate || 0);
-      const beforeVat = subtotal + service;
-      const vat = fees.vatIncluded ? 0 : beforeVat * (fees.vatRate || 0);
-
-      total.textContent = won(beforeVat + vat);
+      // 참고 사이트와 동일하게 부가세 별도 기준 합계만 표시
+      totalEl.textContent = won(total);
       breakdown.textContent = [
         `주대 ${won(bottle)}`,
         `TC ${won(tc)}`,
         rt > 0 ? `RT ${won(rt)}` : '',
-        sideFee > 0 ? `안주 ${won(sideFee)}` : '',
-        service > 0 ? `봉사료 ${won(service)}` : '',
-        vat > 0 ? `부가세 ${won(vat)}` : '',
+        '부가세 별도',
       ]
         .filter(Boolean)
         .join(' · ');
     };
 
-    ['calc-people', 'calc-hours', 'calc-tier', 'calc-side'].forEach((id) =>
+    ['calc-people', 'calc-hours', 'calc-tier'].forEach((id) =>
       pick(id)?.addEventListener('change', update)
     );
     update();

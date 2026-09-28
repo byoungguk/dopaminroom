@@ -1,55 +1,56 @@
 ---
-import { TIERS, FEES, SIDES, PRICE_NOTE } from '../venue';
+import { TIERS, FEES, PRICE_NOTE } from '../venue';
 
 const won = (n: number) => (n > 0 ? `${n.toLocaleString('ko-KR')}원` : '문의');
-const sides = SIDES.filter((s) => s.id !== 'none');
 ---
 
 <div class="tables">
   <div class="card">
-    <h3>주대</h3>
+    <h3>주대 (정찰제)</h3>
     <table>
       <tbody>
         {TIERS.map((tier) => (
-          <tr><td>{tier.name}</td><td class="num">{won(tier.price)}</td></tr>
+          <tr>
+            <td>
+              <span class="name">{tier.name}</span>
+              {tier.note && <span class="note muted">{tier.note}</span>}
+            </td>
+            <td class="num">{won(tier.price)}</td>
+          </tr>
         ))}
       </tbody>
     </table>
   </div>
 
   <div class="card">
-    <h3>서비스 요금</h3>
+    <h3>TC 및 RT</h3>
     <table>
       <tbody>
-        <tr><td>TC <span class="muted">인원당 1시간</span></td><td class="num">{won(FEES.tcPerHour)}</td></tr>
-        <tr><td>RT <span class="muted">입장당</span></td><td class="num">{won(FEES.rt)}</td></tr>
-        <tr><td>봉사료</td><td class="num">{FEES.serviceRate > 0 ? `${FEES.serviceRate * 100}%` : '문의'}</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h3>안주</h3>
-    <table>
-      <tbody>
-        {sides.map((side) => (
-          <tr><td>{side.name}</td><td class="num">{won(side.price)}</td></tr>
-        ))}
+        <tr>
+          <td><span class="name">TC</span><span class="note muted">인원당 1시간 기준</span></td>
+          <td class="num">{won(FEES.tcPerHour)}</td>
+        </tr>
+        <tr>
+          <td><span class="name">웨이터 RT</span><span class="note muted">입장 시 1회</span></td>
+          <td class="num">{won(FEES.rt)}</td>
+        </tr>
       </tbody>
     </table>
   </div>
 </div>
 
-<p class="muted note">{PRICE_NOTE}</p>
+<p class="muted note-all">{PRICE_NOTE}</p>
 
 <style>
   .tables {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 12px;
   }
   h3 { margin: 0 0 6px; font-size: 1rem; color: var(--accent); }
-  td:first-child { border-bottom: 1px solid var(--border); }
+  .name { display: block; font-weight: 600; }
+  .note { display: block; font-size: 0.8rem; line-height: 1.5; }
+  td { vertical-align: top; }
   tr:last-child td { border-bottom: none; }
-  .note { margin: 14px 0 0; }
+  .note-all { margin: 14px 0 0; }
 </style>

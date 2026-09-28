@@ -32,29 +32,19 @@ export const STEPS = [
   { title: '방문 · 착석', desc: '도착하시면 바로 안내해 드립니다.' },
 ];
 
-// 주대 등급 (가격 0 = "문의" 표시, 계산기에서 제외)
+// 주대 (정찰제) — blog20260819 프로젝트와 동일 금액
 export const TIERS = [
-  { id: 'standard', name: '스탠다드', price: 0 },
-  { id: 'premium', name: '프리미엄', price: 0 },
-  { id: 'vip', name: 'VIP', price: 0 },
-  { id: 'vvip', name: 'VVIP', price: 0 },
+  { id: 'standard', name: '스텐다드', price: 150000, note: 'PHANTOM / 과일 + 맥주 + 음료 무제한' },
+  { id: 'premium', name: '프리미엄', price: 190000, note: 'WICE or GOLDEN BLUE / 과일 + 맥주 + 음료 무제한' },
+  { id: 'vip', name: 'VIP', price: 220000, note: 'WINDSOR17 or GOLDEN BLUE17 / 과일 + 맥주 + 음료 무제한' },
+  { id: 'vvip', name: 'VVIP', price: 450000, note: 'MOET ROSE or CHANDON or BALLANTINE17 / 과일 + 맥주 + 음료 무제한' },
 ];
 
 // 서비스 요금
 export const FEES = {
-  tcPerHour: 0, // 인원당 시간당 TC
-  rt: 0, // 웨이터 RT (입장당)
-  serviceRate: 0, // 0.1 = 봉사료 10%
-  vatRate: 0.1,
-  vatIncluded: false, // TODO: 표기 금액 부가세 포함 여부
+  tcPerHour: 120000, // 인원당 1시간
+  rt: 0, // TODO: 웨이터 RT (입장당) — 0이면 "문의" 표기, 계산 제외
 };
-
-// 안주 (선택 시 계산기에 합산)
-export const SIDES = [
-  { id: 'none', name: '선택 안 함', price: 0 },
-  { id: 'basic', name: '기본 안주', price: 0 },
-  { id: 'fruit', name: '과일', price: 0 },
-];
 
 export const PRICE_NOTE =
   '표기 금액은 부가세 별도이며, 요일·시간대에 따라 달라질 수 있습니다. 정확한 금액은 문의해 주세요.';
