@@ -7,10 +7,11 @@ import InfoGrid from '../components/InfoGrid.astro';
 import PriceTable from '../components/PriceTable.astro';
 import PriceCalculator from '../components/PriceCalculator.astro';
 import Gallery from '../components/Gallery.astro';
+import Rooms from '../components/Rooms.astro';
 import LocationMap from '../components/LocationMap.astro';
 import Faq from '../components/Faq.astro';
 import ContactCard from '../components/ContactCard.astro';
-import { VENUE, EVENTS } from '../venue';
+import { VENUE, EVENTS, AMENITIES } from '../venue';
 ---
 
 <BaseLayout description={`${VENUE.category} ${VENUE.name} · ${VENUE.tagline}`} wide>
@@ -22,16 +23,27 @@ import { VENUE, EVENTS } from '../venue';
         <h2>소개</h2>
         <p>{VENUE.category} {VENUE.name}</p>
       </div>
-      <p class="lead">
-        {VENUE.tagline}. {VENUE.scale} 규모에 상시 {VENUE.staffCount}이 대기하며,
-        방문 전 예상 금액을 먼저 안내해 드립니다.
-      </p>
-      <p class="muted">※ 소개 문구는 고객 확인 후 교체 예정</p>
+      <p class="lead">{VENUE.intro}</p>
     </section>
 
     <section class="section" id="strength">
       <div class="section-head"><h2>강점</h2></div>
       <Strengths />
+    </section>
+
+    <section class="section" id="rooms">
+      <div class="section-head">
+        <h2>룸 안내</h2>
+        <p>인원에 맞는 룸을 안내해 드립니다</p>
+      </div>
+      <Rooms />
+    </section>
+
+    <section class="section" id="amenity">
+      <div class="section-head"><h2>시설</h2></div>
+      <ul class="chips">
+        {AMENITIES.map((item) => <li class="tag">{item}</li>)}
+      </ul>
     </section>
 
     <section class="section" id="process">
@@ -104,7 +116,9 @@ import { VENUE, EVENTS } from '../venue';
 </BaseLayout>
 
 <style>
-  .lead { margin: 0 0 8px; font-size: 1.02rem; }
+  .lead { margin: 0; font-size: 1.02rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+  .chips li { margin: 0; }
   .events {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

@@ -1,13 +1,14 @@
-/* 유흥 업소 톤: 다크 기본 + 골드 포인트. 색만 바꾸면 전체 톤이 바뀝니다. */
+/* 네온 블루 톤 (간판 색상 기준). 색만 바꾸면 전체 톤이 바뀝니다. */
 :root {
-  --bg: #0b0b0e;
-  --surface: #15151b;
-  --surface-2: #1e1e26;
+  --bg: #07090f;
+  --surface: #0f1420;
+  --surface-2: #161d2c;
   --text: #f2f2f5;
-  --muted: #9b9bab;
-  --border: #2a2a34;
-  --accent: #d9a441;
-  --accent-soft: rgba(217, 164, 65, 0.14);
+  --muted: #97a3ba;
+  --border: #222b3d;
+  --accent: #2f8bff;
+  --accent-soft: rgba(47, 139, 255, 0.16);
+  --accent-glow: rgba(47, 139, 255, 0.55);
   --max-width: 900px;
   --radius: 14px;
   --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -68,7 +69,8 @@ h1, h2, h3 { line-height: 1.35; letter-spacing: -0.02em; }
   font-size: 1rem;
   border: 1px solid var(--accent);
   background: var(--accent);
-  color: #1a1206;
+  color: #04101f;
+  box-shadow: 0 0 18px var(--accent-glow);
 }
 .btn:hover { text-decoration: none; filter: brightness(1.08); }
 .btn.ghost { background: transparent; color: var(--accent); }

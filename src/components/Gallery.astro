@@ -1,24 +1,32 @@
 ---
-// TODO: public/images/ 에 실제 사진을 넣고 아래 배열을 교체하세요.
-const photos: { src: string; alt: string }[] = [];
+import { PHOTOS } from '../venue';
+import { withBase } from '../url';
 ---
 
-{photos.length > 0 ? (
+{PHOTOS.length > 0 ? (
   <div class="grid">
-    {photos.map((photo) => <img src={photo.src} alt={photo.alt} loading="lazy" />)}
+    {PHOTOS.map((photo) => (
+      <figure>
+        <img src={withBase(`/${photo.src}`)} alt={photo.alt} loading="lazy" />
+      </figure>
+    ))}
   </div>
 ) : (
-  <div class="card empty">
-    <p>사진 준비 중입니다.</p>
-    <p class="muted">고객 제공 사진을 받아 등록 예정</p>
-  </div>
+  <div class="card empty"><p>사진 준비 중입니다.</p></div>
 )}
 
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 10px;
+  }
+  figure { margin: 0; }
+  figure img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--border);
   }
   .empty { text-align: center; }
   .empty p { margin: 0; }

@@ -1,0 +1,24 @@
+---
+import { ROOMS } from '../venue';
+---
+
+<div class="grid">
+  {ROOMS.map((room) => (
+    <div class="card">
+      <p class="name">{room.name}</p>
+      <p class="cap">{room.capacity}</p>
+      <p class="desc">{room.desc}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .name { margin: 0 0 2px; font-weight: 700; font-size: 1.05rem; }
+  .cap { margin: 0 0 8px; color: var(--accent); font-size: 0.88rem; font-weight: 600; }
+  .desc { margin: 0; color: var(--muted); font-size: 0.92rem; }
+</style>

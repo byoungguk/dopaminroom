@@ -1,18 +1,20 @@
 ---
 import { VENUE } from '../venue';
+import { withBase } from '../url';
 
 const tel = VENUE.phone.replace(/-/g, '');
+const bg = withBase('/images/dopamin-entrance.png');
 ---
 
-<section class="hero">
+<section class="hero" style={`--hero-bg: url('${bg}')`}>
   <div class="container">
     <p class="eyebrow">{VENUE.category}</p>
     <h1>{VENUE.name}</h1>
     <p class="tagline">{VENUE.tagline}</p>
     <ul class="quick">
-      <li>{VENUE.hours}</li>
-      <li>{VENUE.scale}</li>
-      <li>상시 {VENUE.staffCount}</li>
+      <li>{VENUE.hours} 운영</li>
+      <li>선릉역 도보 3분</li>
+      <li>정찰제</li>
     </ul>
     <div class="actions">
       <a class="btn" href={`tel:${tel}`}>전화 예약</a>
@@ -27,12 +29,27 @@ const tel = VENUE.phone.replace(/-/g, '');
 
 <style>
   .hero {
-    padding: 76px 0 56px;
-    background:
-      radial-gradient(120% 80% at 50% 0%, rgba(217, 164, 65, 0.18), transparent 62%),
-      var(--bg);
+    position: relative;
+    padding: 96px 0 64px;
     text-align: center;
+    overflow: hidden;
   }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--hero-bg);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.45;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(7, 9, 15, 0.55) 0%, rgba(7, 9, 15, 0.82) 55%, var(--bg) 100%);
+  }
+  .hero .container { position: relative; z-index: 1; }
   .eyebrow {
     margin: 0 0 8px;
     color: var(--accent);
@@ -40,8 +57,12 @@ const tel = VENUE.phone.replace(/-/g, '');
     font-weight: 600;
     letter-spacing: 0.08em;
   }
-  h1 { margin: 0 0 10px; font-size: clamp(2.4rem, 9vw, 3.4rem); }
-  .tagline { margin: 0 0 18px; color: var(--muted); font-size: 1.05rem; }
+  h1 {
+    margin: 0 0 10px;
+    font-size: clamp(2.6rem, 10vw, 3.8rem);
+    text-shadow: 0 0 22px var(--accent-glow);
+  }
+  .tagline { margin: 0 0 18px; color: #d7e2f5; font-size: 1.05rem; }
   .quick {
     display: flex;
     flex-wrap: wrap;
