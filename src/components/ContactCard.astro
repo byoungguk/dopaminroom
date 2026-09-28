@@ -9,7 +9,9 @@ const tel = VENUE.phone.replace(/-/g, '');
   <p class="muted">담당 {VENUE.manager} · 부재 시 회신드립니다</p>
   <div class="cta">
     <a class="btn" href={`tel:${tel}`}>전화 예약</a>
-    <a class="btn ghost" href={VENUE.kakao} target="_blank" rel="noopener">카카오톡</a>
+    {VENUE.kakao && (
+      <a class="btn ghost" href={VENUE.kakao} target="_blank" rel="noopener">카카오톡</a>
+    )}
     <a class="btn ghost" href={`sms:${tel}?body=${encodeURIComponent(VENUE.smsTemplate)}`}>문자 예약</a>
   </div>
 </div>

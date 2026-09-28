@@ -3,8 +3,8 @@ export const VENUE = {
   name: '도파민',
   category: '강남 하이퍼블릭',
   tagline: '선릉역 3분 · 강남 최대 규모 하이퍼블릭',
-  phone: '010-0000-0000', // TODO
-  kakao: 'https://open.kakao.com/', // TODO
+  phone: '010-6466-1839',
+  kakao: '', // TODO: 카카오톡 채널/오픈채팅 링크 (빈 값이면 카톡 버튼 숨김)
   manager: '담당자', // TODO
   smsTemplate: '[도파민 예약문의] 날짜/시간, 인원 남겨주시면 회신드립니다.',
   address: '서울특별시 강남구 선릉로92길 38', // TODO 확인
@@ -26,7 +26,7 @@ export const STRENGTHS = [
 
 // 이용 절차
 export const STEPS = [
-  { title: '전화 · 카톡 문의', desc: '날짜와 시간, 인원을 알려주세요.' },
+  { title: '전화 · 문자 문의', desc: '날짜와 시간, 인원을 알려주세요.' },
   { title: '자리 · 구성 추천', desc: '인원과 예산에 맞는 룸과 구성을 안내드립니다.' },
   { title: '비용 확인', desc: '방문 전 예상 금액을 미리 확정합니다.' },
   { title: '방문 · 착석', desc: '도착하시면 바로 안내해 드립니다.' },

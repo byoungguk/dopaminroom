@@ -47,7 +47,11 @@ const tel = VENUE.phone.replace(/-/g, '');
 
   <div class="cta">
     <a class="btn" href={`tel:${tel}`}>전화로 확인</a>
-    <a class="btn ghost" href={VENUE.kakao} target="_blank" rel="noopener">카톡 문의</a>
+    {VENUE.kakao ? (
+      <a class="btn ghost" href={VENUE.kakao} target="_blank" rel="noopener">카톡 문의</a>
+    ) : (
+      <a class="btn ghost" href={`sms:${tel}?body=${encodeURIComponent(VENUE.smsTemplate)}`}>문자 문의</a>
+    )}
   </div>
 </div>
 
