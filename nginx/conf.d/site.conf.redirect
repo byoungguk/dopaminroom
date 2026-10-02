@@ -1,0 +1,21 @@
+# 2단계: 인증서 발급 후 site.conf 를 이 파일 내용으로 교체한다.
+# 80 포트는 ACME 챌린지만 처리하고 나머지는 대표 주소(https)로 넘긴다.
+server {
+    listen 80;
+    listen [::]:80;
+    server_name __DOMAIN__ www.__DOMAIN__ _;
+
+    # 컨테이너 상태 점검용. 여기서 https 로 넘기면
+    # 점검 도구가 이동을 따라가다 실패해 컨테이너가 이상으로 표시된다.
+    location = /healthz { access_log off; return 200 "ok"; }
+    # ^~ 를 붙여야 한다. 붙이지 않으면 _common.inc 의 숨김 경로 차단 규칙
+    # (location ~ /\.) 이 먼저 걸려 인증서 발급이 403 으로 막힌다.
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+        default_type "text/plain";
+    }
+
+    location / {
+        return 301 https://__PRIMARY__$request_uri;
+    }
+}

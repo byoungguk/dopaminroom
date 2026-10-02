@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>{{ title }}</h1>
+<form method="post" class="card">
+  <p class="hint">내용을 모두 비우면 그 항목은 삭제됩니다. 맨 아래 빈 칸에 입력하면 새로 추가됩니다.</p>
+  {% for row in rows %}
+    {% set ri = loop.index0 %}
+    <div style="padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--border)">
+      {% for field in fields %}
+        <label>{{ labels[loop.index0] }}
+          {% if field in ['desc', 'a'] %}
+            <textarea name="{{ field }}_{{ ri }}">{{ row[field] }}</textarea>
+          {% else %}
+            <input type="text" name="{{ field }}_{{ ri }}" value="{{ row[field] }}" />
+          {% endif %}
+        </label>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <p class="hint">새로 추가</p>
+  {% for field in fields %}
+    <label>{{ labels[loop.index0] }}
+      <input type="text" name="{{ field }}_{{ rows | length }}" />
+    </label>
+  {% endfor %}
+
+  <button class="btn" type="submit">저장</button>
+</form>
+{% endblock %}

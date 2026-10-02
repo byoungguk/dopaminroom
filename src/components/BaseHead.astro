@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { HERO_IMAGE } from '../venue';
 import { withBase } from '../url';
 
 interface Props {
@@ -29,5 +30,5 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:locale" content="ko_KR" />
-<meta property="og:image" content={new URL(withBase('/images/dopamin-entrance.png'), Astro.site)} />
+<meta property="og:image" content={new URL(withBase(`/${HERO_IMAGE}`), Astro.site)} />
 <meta name="twitter:card" content="summary_large_image" />

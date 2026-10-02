@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>가격</h1>
+<form method="post">
+  <div class="card">
+    <h2 style="font-size:1rem;margin:0 0 12px">주대 등급</h2>
+    <p class="hint">금액을 0으로 두면 홈페이지에 "문의"로 표시됩니다. 등급을 없애려면 이름을 비우고 저장하세요.</p>
+    {% for tier in data.tiers %}
+      <div class="row">
+        <label>등급 이름<input type="text" name="name_{{ loop.index0 }}" value="{{ tier.name }}" /></label>
+        <label>금액<input type="text" name="price_{{ loop.index0 }}" value="{{ tier.price }}" /></label>
+      </div>
+      <label>구성 설명<input type="text" name="note_{{ loop.index0 }}" value="{{ tier.note }}" /></label>
+    {% endfor %}
+    <hr style="border:0;border-top:1px solid var(--border);margin:16px 0" />
+    <p class="hint">새 등급 추가 (비워두면 추가하지 않습니다)</p>
+    <div class="row">
+      <label>등급 이름<input type="text" name="new_name" /></label>
+      <label>금액<input type="text" name="new_price" /></label>
+    </div>
+    <label>구성 설명<input type="text" name="new_note" /></label>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1rem;margin:0 0 12px">TC / RT</h2>
+    <div class="row">
+      <label>TC (인원당 1시간)<input type="text" name="tcPerHour" value="{{ data.fees.tcPerHour }}" /></label>
+      <label>웨이터 RT (입장당)<input type="text" name="rt" value="{{ data.fees.rt }}" /></label>
+    </div>
+    <label>가격 안내 문구<textarea name="priceNote">{{ data.priceNote }}</textarea></label>
+  </div>
+
+  <button class="btn" type="submit">저장</button>
+</form>
+{% endblock %}

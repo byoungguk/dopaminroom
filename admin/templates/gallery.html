@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>사진 관리</h1>
+
+<form method="post" action="{{ url_for('gallery_upload') }}" enctype="multipart/form-data" class="card">
+  <label>사진 올리기 (여러 장 선택 가능 · jpg, png, webp)
+    <input type="file" name="photos" accept="image/*" multiple />
+  </label>
+  <button class="btn" type="submit">올리기</button>
+</form>
+
+<form method="post" action="{{ url_for('gallery_update') }}" class="card">
+  <p class="hint">순서 숫자가 작을수록 앞에 표시됩니다. 설명은 사진 대체 문구로 쓰입니다.</p>
+  <div class="grid">
+    {% for item in items %}
+      <div>
+        <img class="thumb" src="{{ url_for('gallery_file', name=item.file) }}" alt="{{ item.label }}" />
+        <label>순서<input type="text" name="order_{{ item.file }}" value="{{ item.order }}" /></label>
+        <label>설명<input type="text" name="label_{{ item.file }}" value="{{ item.label }}" /></label>
+      </div>
+    {% endfor %}
+  </div>
+  {% if items %}<button class="btn" type="submit">순서·설명 저장</button>{% else %}<p>아직 사진이 없습니다.</p>{% endif %}
+</form>
+
+{% if items %}
+<div class="card">
+  <h2 style="font-size:1rem;margin:0 0 12px">사진 삭제</h2>
+  {% for item in items %}
+    <form method="post" action="{{ url_for('gallery_delete') }}" style="display:inline-block;margin:0 6px 6px 0"
+          onsubmit="return confirm('{{ item.file }} 사진을 삭제할까요?')">
+      <input type="hidden" name="file" value="{{ item.file }}" />
+      <button class="btn danger" type="submit">{{ item.file }} 삭제</button>
+    </form>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

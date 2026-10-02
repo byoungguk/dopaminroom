@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>{{ data.venue.name }} 홈페이지 관리</h1>
+
+<div class="card">
+  <p>수정한 내용은 저장하면 1~2분 뒤 홈페이지에 반영됩니다.</p>
+  <p class="status">
+    {% if status.pending %}현재 <b>반영 대기 중</b>입니다.{% elif status.last %}최근 반영: {{ status.last }}{% else %}아직 반영 기록이 없습니다.{% endif %}
+  </p>
+  <form method="post" action="{{ url_for('rebuild') }}">
+    <button class="btn sub" type="submit">지금 다시 반영하기</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2 style="font-size:1rem;margin:0 0 10px">현재 설정</h2>
+  <table>
+    <tr><th>업종</th><td>{{ data.venue.category }}</td></tr>
+    <tr><th>전화</th><td>{{ data.venue.phone }}</td></tr>
+    <tr><th>카카오톡</th><td>{{ data.venue.kakao or '미설정 (버튼 숨김)' }}</td></tr>
+    <tr><th>영업시간</th><td>{{ data.venue.hours }}</td></tr>
+    <tr><th>주소</th><td>{{ data.venue.address }}</td></tr>
+    <tr><th>주대 등급</th><td>{{ data.tiers | length }}개</td></tr>
+    <tr><th>TC</th><td>{{ "{:,}".format(data.fees.tcPerHour) }}원</td></tr>
+    <tr><th>사진</th><td>{{ photo_count }}장</td></tr>
+  </table>
+</div>
+{% endblock %}

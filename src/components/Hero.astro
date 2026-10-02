@@ -1,9 +1,9 @@
 ---
-import { VENUE } from '../venue';
+import { VENUE, HERO_IMAGE } from '../venue';
 import { withBase } from '../url';
 
 const tel = VENUE.phone.replace(/-/g, '');
-const bg = withBase('/images/dopamin-entrance.png');
+const bg = withBase(`/${HERO_IMAGE}`);
 ---
 
 <section class="hero" style={`--hero-bg: url('${bg}')`}>

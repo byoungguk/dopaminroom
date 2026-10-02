@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>기본 정보</h1>
+<form method="post" class="card">
+  {% for key, label, kind in fields %}
+    <label>{{ label }}
+      {% if kind == 'textarea' %}
+        <textarea name="{{ key }}">{{ venue[key] }}</textarea>
+      {% else %}
+        <input type="text" name="{{ key }}" value="{{ venue[key] }}" />
+      {% endif %}
+    </label>
+  {% endfor %}
+  <label>찾아오는 길 (한 줄에 하나씩)
+    <textarea name="access">{{ venue.access | join('\n') }}</textarea>
+  </label>
+  <button class="btn" type="submit">저장</button>
+</form>
+{% endblock %}

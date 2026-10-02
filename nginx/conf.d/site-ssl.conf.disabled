@@ -1,0 +1,42 @@
+# 443 포트 설정 템플릿 (비활성 상태)
+# 인증서가 없는 상태에서 로드되면 nginx 가 기동에 실패하므로,
+# scripts/init-cert.sh 가 발급 성공 후 아래 자리표시자를 치환하여
+# site-ssl.conf 로 활성화한다.
+#
+#   __CERTNAME__  인증서 이름 (대표 주소)
+#   __PRIMARY__   대표 주소. 다른 주소로 들어와도 여기로 넘긴다
+#   __DOMAIN__    퓨니코드 도메인 (www 없는 형태)
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name __DOMAIN__ www.__DOMAIN__;
+
+    ssl_certificate     /etc/letsencrypt/live/__CERTNAME__/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/__CERTNAME__/privkey.pem;
+
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    # 컨테이너 상태 점검용. 여기서 https 로 넘기면
+    # 점검 도구가 이동을 따라가다 실패해 컨테이너가 이상으로 표시된다.
+    location = /healthz { access_log off; return 200 "ok"; }
+    # ^~ 를 붙여야 한다. 붙이지 않으면 _common.inc 의 숨김 경로 차단 규칙
+    # (location ~ /\.) 이 먼저 걸려 인증서 발급이 403 으로 막힌다.
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+        default_type "text/plain";
+    }
+
+    # 대표 주소가 아닌 이름으로 들어오면 대표 주소로 넘긴다.
+    # 검색엔진이 같은 내용을 두 주소로 중복 수집하지 않도록 하기 위함이다.
+    if ($host != __PRIMARY__) {
+        return 301 https://__PRIMARY__$request_uri;
+    }
+
+    include /etc/nginx/conf.d/_common.inc;
+}

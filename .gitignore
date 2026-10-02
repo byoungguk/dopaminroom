@@ -3,7 +3,13 @@ dist/
 .astro/
 .env
 .env.*
+!.env.example
 .DS_Store
 
 # 고객 계정정보 포함 — 공개 저장소에 올리지 않음
 PROJECT.md
+
+# 운영 중 생성되는 파일
+.admin/
+certbot/conf/
+certbot/www/

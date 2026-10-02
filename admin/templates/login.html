@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>로그인</h1>
+<form method="post" class="card">
+  <label>아이디
+    <input type="text" name="username" autocomplete="username" autofocus />
+  </label>
+  <label>비밀번호
+    <input type="password" name="password" autocomplete="current-password" />
+  </label>
+  <button class="btn" type="submit">로그인</button>
+</form>
+{% endblock %}

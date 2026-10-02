@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>도파민 관리자</title>
+  <style>
+    :root {
+      --bg: #0f1420; --surface: #161d2c; --text: #eef2f8; --muted: #9aa6bb;
+      --border: #27324a; --accent: #2f8bff; --danger: #ff5b5b; --ok: #37c978;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 16px; line-height: 1.6;
+    }
+    a { color: var(--accent); }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border);
+      background: var(--surface); position: sticky; top: 0; z-index: 5;
+    }
+    header .title { font-weight: 800; }
+    nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+    nav a {
+      padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
+      color: var(--muted); text-decoration: none; font-size: 0.9rem; white-space: nowrap;
+    }
+    nav a.on, nav a:hover { color: var(--text); border-color: var(--accent); }
+    main { max-width: 860px; margin: 0 auto; padding: 20px 16px 80px; }
+    h1 { font-size: 1.4rem; margin: 0 0 16px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+    label { display: block; margin-bottom: 14px; font-size: 0.88rem; color: var(--muted); }
+    input[type=text], input[type=password], textarea, input[type=file] {
+      width: 100%; margin-top: 6px; padding: 11px 12px; font-size: 1rem; font-family: inherit;
+      background: #0d1322; color: var(--text); border: 1px solid var(--border); border-radius: 8px;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .btn {
+      display: inline-block; padding: 12px 20px; border-radius: 8px; border: 0;
+      background: var(--accent); color: #04101f; font-weight: 700; font-size: 1rem; cursor: pointer;
+    }
+    .btn.sub { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn.danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 14px; font-size: 0.9rem; }
+    .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+    .flash { padding: 12px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 0.95rem; }
+    .flash.ok { background: rgba(55, 201, 120, 0.14); color: var(--ok); }
+    .flash.error { background: rgba(255, 91, 91, 0.14); color: var(--danger); }
+    .status { font-size: 0.85rem; color: var(--muted); }
+    .status b { color: var(--accent); }
+    .hint { color: var(--muted); font-size: 0.85rem; margin: -6px 0 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .thumb { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.92rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="title">도파민 관리자</span>
+    {% if session.get('auth') %}
+      <span class="status">
+        {% if status and status.pending %}<b>반영 대기 중</b>{% elif status and status.last %}최근 반영 {{ status.last }}{% endif %}
+      </span>
+      <a href="{{ url_for('logout') }}">로그아웃</a>
+    {% endif %}
+  </header>
+
+  {% if session.get('auth') %}
+  <nav>
+    <a href="{{ url_for('index') }}">홈</a>
+    <a href="{{ url_for('info') }}">기본 정보</a>
+    <a href="{{ url_for('prices') }}">가격</a>
+    <a href="{{ url_for('sections', key='rooms') }}">룸</a>
+    <a href="{{ url_for('sections', key='strengths') }}">강점</a>
+    <a href="{{ url_for('sections', key='steps') }}">이용 절차</a>
+    <a href="{{ url_for('amenities') }}">시설</a>
+    <a href="{{ url_for('sections', key='events') }}">이벤트</a>
+    <a href="{{ url_for('sections', key='faq') }}">FAQ</a>
+    <a href="{{ url_for('gallery') }}">사진</a>
+    <a href="{{ url_for('backup') }}">백업</a>
+  </nav>
+  {% endif %}
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block body %}{% endblock %}
+  </main>
+</body>
+</html>

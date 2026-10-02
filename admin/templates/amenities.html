@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>시설</h1>
+<form method="post" class="card">
+  <label>시설 목록 (한 줄에 하나씩)
+    <textarea name="items" style="min-height:180px">{{ items | join('\n') }}</textarea>
+  </label>
+  <button class="btn" type="submit">저장</button>
+</form>
+{% endblock %}
