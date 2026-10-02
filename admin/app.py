@@ -39,6 +39,24 @@ MAX_UPLOAD_MB = int(os.environ.get("MAX_UPLOAD_MB", "20"))
 ALLOWED_EXT = {".webp", ".jpg", ".jpeg", ".png", ".avif"}
 
 app = Flask(__name__)
+
+
+class PrefixMiddleware:
+    """nginx 가 /admin/ 을 떼고 넘겨주므로, 앱이 만드는 주소에 다시 붙여준다.
+    이 처리가 없으면 화면 안의 링크가 /prices 처럼 만들어져
+    관리 페이지가 아니라 사이트 본문으로 이동한다."""
+
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        prefix = environ.get("HTTP_X_FORWARDED_PREFIX", "")
+        if prefix:
+            environ["SCRIPT_NAME"] = "/" + prefix.strip("/")
+        return self.wsgi_app(environ, start_response)
+
+
+app.wsgi_app = PrefixMiddleware(app.wsgi_app)
 app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024
 app.config["SESSION_COOKIE_HTTPONLY"] = True
