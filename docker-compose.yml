@@ -1,3 +1,11 @@
+# 도파민 사이트 구성.
+#
+# 운영 서버에서는 blog20260819(강남호빠) 의 nginx 가 이 사이트까지 함께 서빙한다.
+# 그래서 기본으로 뜨는 서비스는 admin 하나뿐이고, nginx/certbot 은
+# `--profile standalone` 을 줄 때만 뜬다. (같은 서버에서 80 포트가 겹치지 않게 한다)
+#
+#   같은 서버에 얹는 경우:  docker compose up -d --build admin
+#   이 프로젝트 단독 운영:  docker compose --profile standalone up -d
 services:
   # 빌드 전용 one-shot 컨테이너. `--profile build` 를 줄 때만 실행된다.
   astro:
@@ -14,46 +22,12 @@ services:
       - ./:/src
     command: sh -c "npm ci --no-audit --no-fund && npm run build"
 
-  nginx:
-    image: nginx:1.27-alpine
-    ports:
-      # 도메인 연결 전에는 80 으로 두어 IP 만으로 접속되게 한다.
-      - "${HTTP_PORT:-80}:80"
-      - "${HTTPS_PORT:-443}:443"
-    environment:
-      TZ: ${TZ:-Asia/Seoul}
-    volumes:
-      - ./dist:/usr/share/nginx/html:ro
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
-    depends_on:
-      - admin
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1/healthz"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-
-  certbot:
-    image: certbot/certbot
-    environment:
-      TZ: ${TZ:-Asia/Seoul}
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    # 갱신에 성공하면 .renewed 표시 파일을 남긴다.
-    # 호스트의 watch-changes.sh 가 이 파일을 보고 nginx 에 재적용을 지시한다.
-    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --deploy-hook "touch /etc/letsencrypt/.renewed" --quiet; sleep 12h & wait $${!}; done'
-    restart: unless-stopped
-
   # 관리 페이지. 사이트 내용을 직접 읽고 쓰며,
   # 변경 사항은 .admin/rebuild.request 파일로 호스트 감시 스크립트에 알린다.
   admin:
     build: ./admin
+    # 다른 compose 프로젝트의 nginx 가 이름으로 찾아갈 수 있게 고정한다
+    container_name: dopamin-admin
     environment:
       ADMIN_USER: ${ADMIN_USER}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
@@ -66,6 +40,8 @@ services:
       - ./content:/data
       - ./public/images/gallery:/gallery
       - ./.admin:/state
+    networks:
+      - web
     restart: unless-stopped
     expose:
       - "8000"
@@ -75,3 +51,47 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+
+  nginx:
+    image: nginx:1.27-alpine
+    profiles: ["standalone"]
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      TZ: ${TZ:-Asia/Seoul}
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    networks:
+      - web
+    depends_on:
+      - admin
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  certbot:
+    image: certbot/certbot
+    profiles: ["standalone"]
+    environment:
+      TZ: ${TZ:-Asia/Seoul}
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    # 갱신에 성공하면 .renewed 표시 파일을 남긴다.
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --deploy-hook "touch /etc/letsencrypt/.renewed" --quiet; sleep 12h & wait $${!}; done'
+    restart: unless-stopped
+
+# 강남호빠 서버의 nginx 와 통신하기 위한 공유 네트워크.
+# 서버에서 한 번만 만든다:  docker network create web
+networks:
+  web:
+    external: true

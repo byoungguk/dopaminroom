@@ -32,7 +32,8 @@ python admin/app.py    # http://localhost:8000
 
 ## 서버 배포
 
-[docs/서버-구축-안내.md](docs/서버-구축-안내.md) 참고.
+- 새 서버 단독 운영: [docs/서버-구축-안내.md](docs/서버-구축-안내.md)
+- 강남호빠 서버에 함께 올리기: [docs/기존서버에-추가하기.md](docs/기존서버에-추가하기.md)
 
 ```bash
 cp .env.example .env   # 값 채우기
