@@ -28,6 +28,9 @@ services:
     build: ./admin
     # 다른 compose 프로젝트의 nginx 가 이름으로 찾아갈 수 있게 고정한다
     container_name: dopamin-admin
+    # 호스트 사용자로 실행한다. root 로 두면 관리자가 만든 파일을
+    # 호스트의 감시 스크립트가 지우지 못해 재빌드가 멈춘다.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     environment:
       ADMIN_USER: ${ADMIN_USER}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
